@@ -6,6 +6,10 @@ func LogInfo(text string) {
 	fmt.Println("Info=>", text)
 }
 
+func LogError(text string) {
+	fmt.Println("Error=>", text)
+}
+
 func LogWarning(text string) {
-	fmt.Println("W=>", text)
+	fmt.Println("Warning=>", text)
 }
