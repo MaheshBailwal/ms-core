@@ -14,6 +14,7 @@ type DBContext struct {
 	IsTranOpen       bool
 	IsConOpen        bool
 	db               sqlx.DB
+	Schema           string
 }
 
 func (r *DBContext) ExecuteCommand(sqlCommand string) *sqlx.Row {

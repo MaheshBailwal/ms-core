@@ -30,7 +30,7 @@ func NewGenericRepository[TE interface{}](db *DBContext) GenericRepository[TE] {
 
 func (r *GenericRepository[TE]) Create(ctx context.Context, entity *TE) (int64, error) {
 
-	var query = CreateInsertQuery(*entity)
+	var query = CreateInsertQuery(*entity, r.DBContext.Schema)
 	row := r.DBContext.ExecuteCommand(query)
 	var id int64
 	row.Scan(&id)
@@ -38,13 +38,13 @@ func (r *GenericRepository[TE]) Create(ctx context.Context, entity *TE) (int64, 
 }
 
 func (r *GenericRepository[TE]) Update(ctx context.Context, entity *TE) (int64, error) {
-	var query = CreateUpdateQuery(*entity)
+	var query = CreateUpdateQuery(*entity, r.DBContext.Schema)
 	r.DBContext.ExecuteCommand(query)
 	return 1, nil
 }
 
 func (r *GenericRepository[TE]) All(ctx context.Context, filters QueryFilter) ([]TE, error) {
-	var query = CreateReadAllQuery[TE](filters)
+	var query = CreateReadAllQuery[TE](filters, r.DBContext.Schema)
 	fmt.Println(query)
 	rows, err := r.DBContext.ExecuteQuery(query)
 	if err != nil {
@@ -56,7 +56,7 @@ func (r *GenericRepository[TE]) All(ctx context.Context, filters QueryFilter) ([
 }
 
 func (r *GenericRepository[TE]) ById(ctx context.Context, id int64) (*TE, error) {
-	var query = CreateReadByIdQuery[TE](id)
+	var query = CreateReadByIdQuery[TE](id, r.DBContext.Schema)
 	r.DBContext.ExecuteQuery(query)
 	rows, err := r.DBContext.ExecuteQuery(query)
 	if err != nil {
@@ -71,7 +71,7 @@ func (r *GenericRepository[TE]) ById(ctx context.Context, id int64) (*TE, error)
 }
 
 func (r *GenericRepository[TE]) Delete(ctx context.Context, id int64) (int64, error) {
-	var query = CreateDeleteQuery[TE](id)
+	var query = CreateDeleteQuery[TE](id, r.DBContext.Schema)
 	return r.DBContext.ExecuteDelete(query)
 }
 

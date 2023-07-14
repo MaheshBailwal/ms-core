@@ -14,8 +14,6 @@ import (
 	_ "github.com/microsoft/go-mssqldb"
 )
 
-const schema = "plum"
-
 type fieldMetadData struct {
 	name         string
 	dbField      string
@@ -25,7 +23,7 @@ type fieldMetadData struct {
 	value        string
 }
 
-func CreateInsertQuery(q interface{}) string {
+func CreateInsertQuery(q interface{}, schema string) string {
 	fieldsMetaData := getFieldsMetaData(q)
 	var fieldsName = ""
 	var fieldsValue = ""
@@ -52,7 +50,7 @@ func CreateInsertQuery(q interface{}) string {
 	return query
 }
 
-func CreateUpdateQuery(q interface{}) string {
+func CreateUpdateQuery(q interface{}, schema string) string {
 	fieldsMetaData := getFieldsMetaData(q)
 	var updateFields = ""
 	var where = ""
@@ -77,7 +75,7 @@ func CreateUpdateQuery(q interface{}) string {
 	return query
 }
 
-func CreateReadAllQuery[T any](filters QueryFilter) string {
+func CreateReadAllQuery[T any](filters QueryFilter, schema string) string {
 	var entity T
 	table := reflect.ValueOf(&entity).Elem().Type().Name()
 	fieldsMetaData := getFieldsMetaData(entity)
@@ -117,7 +115,7 @@ func CreateReadAllQuery[T any](filters QueryFilter) string {
 		strings.ToLower(fieldsName), schema, strings.ToLower(table), filterField, sortField)
 }
 
-func CreateReadByIdQuery[T any](id int64) string {
+func CreateReadByIdQuery[T any](id int64, schema string) string {
 	var entity T
 	table := reflect.ValueOf(&entity).Elem().Type().Name()
 	fieldsMetaData := getFieldsMetaData(entity)
@@ -138,7 +136,7 @@ func CreateReadByIdQuery[T any](id int64) string {
 		strings.ToLower(fieldsName), schema, strings.ToLower(table), where)
 }
 
-func CreateDeleteQuery[T any](id int64) string {
+func CreateDeleteQuery[T any](id int64, schema string) string {
 	var entity T
 	table := reflect.ValueOf(&entity).Elem().Type().Name()
 	fieldsMetaData := getFieldsMetaData(entity)
