@@ -222,7 +222,6 @@ func getFieldValue(q interface{}, indx int) (string, bool) {
 func getFieldValueEx(v interface{}, field int) (string, bool) {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).Field(field)
-	//fmt.Println("f->", v)
 	fieldValue := f.Interface()
 	switch v := fieldValue.(type) {
 	case bool:

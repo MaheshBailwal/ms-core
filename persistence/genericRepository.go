@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/MaheshBailwal/mscore/core"
@@ -22,9 +21,10 @@ type GenericRepository[TE interface{}] struct {
 	queryhandlers map[string]IQueryHandler
 }
 
-func NewGenericRepository[TE interface{}](db *DBContext) GenericRepository[TE] {
+func NewGenericRepository[TE interface{}](db *DBContext, queryhandlers map[string]IQueryHandler) GenericRepository[TE] {
 	return GenericRepository[TE]{
-		DBContext: db,
+		DBContext:     db,
+		queryhandlers: queryhandlers,
 	}
 }
 
@@ -45,7 +45,6 @@ func (r *GenericRepository[TE]) Update(ctx context.Context, entity *TE) (int64, 
 
 func (r *GenericRepository[TE]) All(ctx context.Context, filters QueryFilter) ([]TE, error) {
 	var query = CreateReadAllQuery[TE](filters, r.DBContext.Schema)
-	fmt.Println(query)
 	rows, err := r.DBContext.ExecuteQuery(query)
 	if err != nil {
 		log.Println(err)

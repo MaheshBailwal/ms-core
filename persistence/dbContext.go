@@ -24,7 +24,9 @@ func (r *DBContext) ExecuteCommand(sqlCommand string) *sqlx.Row {
 
 	fmt.Println(sqlCommand)
 	row := r.Transcation.QueryRowx(sqlCommand)
-	fmt.Println(row.Err())
+	if row.Err() != nil {
+		fmt.Println(row.Err())
+	}
 	return row
 }
 
@@ -42,7 +44,6 @@ func (r *DBContext) ExecuteQuery(query string) (*sqlx.Rows, error) {
 	r.openConnection()
 	rows, err := r.db.Queryx(query)
 	fmt.Println(query)
-	fmt.Println("err->", err)
 	return rows, err
 }
 

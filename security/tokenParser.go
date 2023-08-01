@@ -44,7 +44,6 @@ func ValidateToken(tokenstr string) (map[string]interface{}, error) {
 
 	for k := range claims {
 		claimsMap[k] = claims[k]
-		fmt.Println("k->", k, "val->", claims[k])
 	}
 
 	return claimsMap, nil
