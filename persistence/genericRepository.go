@@ -7,7 +7,7 @@ import (
 	"github.com/MaheshBailwal/mscore/core"
 )
 
-type IGenericRepository[TE core.IEntity] interface {
+type GenericRepository[TE core.IEntity] interface {
 	All(ctx context.Context, filters QueryFilter) ([]TE, error)
 	ById(ctx context.Context, id int64) (*TE, error)
 	Create(ctx context.Context, entity *TE) (int64, error)
@@ -16,19 +16,19 @@ type IGenericRepository[TE core.IEntity] interface {
 	Query(ctx context.Context, query IDomainQuery) (any, error)
 }
 
-type GenericRepository[TE interface{}] struct {
+type GenericRepositorySql[TE interface{}] struct {
 	DBContext     *DBContext
 	queryhandlers map[string]IQueryHandler
 }
 
-func NewGenericRepository[TE interface{}](db *DBContext, queryhandlers map[string]IQueryHandler) GenericRepository[TE] {
-	return GenericRepository[TE]{
+func NewGenericRepositorySql[TE interface{}](db *DBContext, queryhandlers map[string]IQueryHandler) GenericRepositorySql[TE] {
+	return GenericRepositorySql[TE]{
 		DBContext:     db,
 		queryhandlers: queryhandlers,
 	}
 }
 
-func (r *GenericRepository[TE]) Create(ctx context.Context, entity *TE) (int64, error) {
+func (r *GenericRepositorySql[TE]) Create(ctx context.Context, entity *TE) (int64, error) {
 
 	var query = CreateInsertQuery(*entity, r.DBContext.Schema)
 	row := r.DBContext.ExecuteCommand(query)
@@ -37,13 +37,13 @@ func (r *GenericRepository[TE]) Create(ctx context.Context, entity *TE) (int64, 
 	return id, nil
 }
 
-func (r *GenericRepository[TE]) Update(ctx context.Context, entity *TE) (int64, error) {
+func (r *GenericRepositorySql[TE]) Update(ctx context.Context, entity *TE) (int64, error) {
 	var query = CreateUpdateQuery(*entity, r.DBContext.Schema)
 	r.DBContext.ExecuteCommand(query)
 	return 1, nil
 }
 
-func (r *GenericRepository[TE]) All(ctx context.Context, filters QueryFilter) ([]TE, error) {
+func (r *GenericRepositorySql[TE]) All(ctx context.Context, filters QueryFilter) ([]TE, error) {
 	var query = CreateReadAllQuery[TE](filters, r.DBContext.Schema)
 	rows, err := r.DBContext.ExecuteQuery(query)
 	if err != nil {
@@ -54,7 +54,7 @@ func (r *GenericRepository[TE]) All(ctx context.Context, filters QueryFilter) ([
 	return result, nil
 }
 
-func (r *GenericRepository[TE]) ById(ctx context.Context, id int64) (*TE, error) {
+func (r *GenericRepositorySql[TE]) ById(ctx context.Context, id int64) (*TE, error) {
 	var query = CreateReadByIdQuery[TE](id, r.DBContext.Schema)
 	r.DBContext.ExecuteQuery(query)
 	rows, err := r.DBContext.ExecuteQuery(query)
@@ -69,12 +69,12 @@ func (r *GenericRepository[TE]) ById(ctx context.Context, id int64) (*TE, error)
 	return &result[0], nil
 }
 
-func (r *GenericRepository[TE]) Delete(ctx context.Context, id int64) (int64, error) {
+func (r *GenericRepositorySql[TE]) Delete(ctx context.Context, id int64) (int64, error) {
 	var query = CreateDeleteQuery[TE](id, r.DBContext.Schema)
 	return r.DBContext.ExecuteDelete(query)
 }
 
-func (r *GenericRepository[TE]) Query(ctx context.Context, query IDomainQuery) (any, error) {
+func (r *GenericRepositorySql[TE]) Query(ctx context.Context, query IDomainQuery) (any, error) {
 
 	//TODO: singleton
 	// mapping := make(map[string]IQueryHandler)
